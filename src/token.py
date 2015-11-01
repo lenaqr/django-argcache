@@ -28,7 +28,6 @@ from django.core.cache import cache
 
 from argcache.marinade import marinade_dish
 from argcache.key_set import has_wildcard, specifies_key
-from esp.middleware import ESPError
 
 __all__ = ['Token', 'ExternalToken']
 
@@ -103,7 +102,7 @@ class Token(object):
         """ Given a filtered set of arguments, deletes things. """
         # Check if this is a single item...
         if has_wildcard(filt):
-            raise ESPError("Tried to delete an argument set with a wildcard.")
+            raise ValueError("Tried to delete an argument set with a wildcard.")
         self.cache.delete(self.key_filt(filt))
         # Send the signal...
         if send_signal:

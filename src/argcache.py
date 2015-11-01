@@ -27,8 +27,6 @@ from django.dispatch import Signal
 from django.db.models import signals
 from django.conf import settings
 
-from esp.middleware import ESPError
-
 from argcache.queued import add_lazy_dependency
 from argcache.token import Token, SingleEntryToken
 from argcache.key_set import specifies_key, token_list_for
@@ -216,7 +214,7 @@ class ArgCache(object):
             # don't do anything if we already have an id
             return param
         if not self.param_dict.has_key(param):
-            raise ESPError('Cache %s (params %s) error: %s is not a valid argument' % (self.name, self.param_dict, param))
+            raise ValueError('Cache %s (params %s) error: %s is not a valid argument' % (self.name, self.param_dict, param))
         return self.param_dict[param]
 
     def delete_all(self):
@@ -456,7 +454,7 @@ class ArgCache(object):
 
         def resolve_depend_on_row(Model):
             if Model is None:
-                raise ESPError("Attempting to depend on Model None... this is a pretty dumb thing to do.")
+                raise ValueError("Attempting to depend on Model None... this is a pretty dumb thing to do.")
             def delete_cb(sender, instance, **kwargs):
                 if not filter(instance):
                     return None
