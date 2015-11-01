@@ -25,12 +25,12 @@ class Article(models.Model):
     @cache_function
     def num_comments(self):
         return self.comments.count()
-    num_comments.depend_on_row('cache.Comment', lambda comment: {'self': comment.article})
+    num_comments.depend_on_row('tests.Comment', lambda comment: {'self': comment.article})
 
     @cache_function
     def num_comments_with_dummy(self, dummy):
         return self.comments.count()
-    num_comments_with_dummy.depend_on_row('cache.Comment', lambda comment: {'self': comment.article})
+    num_comments_with_dummy.depend_on_row('tests.Comment', lambda comment: {'self': comment.article})
 
     def __unicode__(self):
         return self.headline
@@ -45,7 +45,7 @@ class Reporter(models.Model):
     @cache_function
     def full_name(self):
         return self.first_name + ' ' + self.last_name
-    full_name.depend_on_row('cache.Reporter', lambda reporter: {'self': reporter})
+    full_name.depend_on_row('tests.Reporter', lambda reporter: {'self': reporter})
 
     @cache_function
     def top_article(self):
