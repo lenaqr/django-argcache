@@ -22,6 +22,9 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from django.conf import settings
+settings.CACHE_DEBUG = getattr(settings, 'CACHE_DEBUG', False)
+
 # Convenience imports
 from .function import cache_function, cache_function_for
 from .key_set import wildcard
