@@ -23,19 +23,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from .registry import all_caches
-from esp.users.models import admin_required
-from esp.web.util.main import render_to_response
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render_to_response
 from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 
-@admin_required
+@login_required
 def view_all(request):
+    if not request.user.is_staff:
+        return HttpResponseForbidden()
     caches = sorted(all_caches, key=lambda c: c.name)
     cache_data = [{'pretty_name': cache.pretty_name, 'hit_count': cache.hit_count, 'miss_count': cache.miss_count} for cache in caches]
-    return render_to_response('cache/view_all.html', request, {'caches': cache_data})
+    return render_to_response('argcache/view_all.html', {'caches': cache_data})
 
-@admin_required
+@login_required
 def flush(request, cache_id):
+    if not request.user.is_staff:
+        return HttpResponseForbidden()
     cache = sorted(all_caches, key=lambda c: c.name)[int(cache_id)]
     cache.delete_all()
     return redirect(reverse(view_all))
