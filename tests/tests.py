@@ -1,93 +1,9 @@
-from django.db import models
 from django.test import TestCase
 
 import unittest
 
 from argcache import registry, queued
-from argcache.function import cache_function
-from argcache.key_set import wildcard
-
-# hack the cache loader so we can define more caches
-registry._caches_locked = False
-
-# some test functions and models
-
-counter = [0]
-@cache_function
-def get_calls(x):
-    counter[0] += 1
-    return counter[0]
-
-class HashTag(models.Model):
-    label = models.CharField(max_length=40, unique=True)
-
-    def __unicode__(self):
-        return self.label
-
-class Article(models.Model):
-    headline = models.CharField(max_length=200)
-    content = models.TextField()
-    reporter = models.ForeignKey('Reporter', related_name='articles')
-    hashtags = models.ManyToManyField('HashTag', related_name='articles')
-
-    @cache_function
-    def num_comments(self):
-        return self.comments.count()
-    num_comments.depend_on_row('cache.Comment', lambda comment: {'self': comment.article})
-
-    @cache_function
-    def num_comments_with_dummy(self, dummy):
-        return self.comments.count()
-    num_comments_with_dummy.depend_on_row('cache.Comment', lambda comment: {'self': comment.article})
-
-    def __unicode__(self):
-        return self.headline
-
-class Comment(models.Model):
-    article = models.ForeignKey('Article', related_name='comments')
-
-class Reporter(models.Model):
-    first_name = models.CharField(max_length=70)
-    last_name = models.CharField(max_length=70)
-
-    @cache_function
-    def full_name(self):
-        return self.first_name + ' ' + self.last_name
-    full_name.depend_on_row('cache.Reporter', lambda reporter: {'self': reporter})
-
-    @cache_function
-    def top_article(self):
-        articles = self.articles.all()
-        if articles:
-            return max(articles, key=Article.num_comments)
-        else:
-            return None
-    top_article.depend_on_row(Article, lambda article: {'self': article.reporter})
-    top_article.depend_on_cache(Article.num_comments, lambda self=wildcard: {'self': self.reporter})
-
-    @cache_function
-    def articles_with_hashtag(self, hashtag='#hashtag'):
-        return list(self.articles.filter(hashtags__label=hashtag).values_list('headline', flat=True))
-    articles_with_hashtag.depend_on_model(HashTag)
-    articles_with_hashtag.depend_on_row(Article, lambda article: {'self': article.reporter})
-    articles_with_hashtag.depend_on_m2m(Article, 'hashtags', lambda article, hashtag: {'self': article.reporter, 'hashtag': hashtag.label})
-
-    @cache_function
-    def articles_with_headline(self, headline):
-        return list(self.articles.filter(headline=headline).values_list('content', flat=True))
-    articles_with_headline.depend_on_row(Article, lambda article: {'self': article.reporter, 'headline': article.headline})
-
-    @cache_function
-    def articles_with_headline_and_dummy(self, dummy, headline):
-        return list(self.articles.filter(headline=headline).values_list('content', flat=True))
-    articles_with_headline_and_dummy.depend_on_row(Article, lambda article: {'self': article.reporter, 'headline': article.headline})
-
-    def __unicode__(self):
-        return self.full_name()
-
-# unhack the cache loader
-registry._finalize_caches()
-registry._lock_caches()
+from .models import get_calls, HashTag, Article, Comment, Reporter
 
 
 class CacheTests(TestCase):
