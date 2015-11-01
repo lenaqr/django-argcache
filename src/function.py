@@ -26,8 +26,8 @@ import functools
 import inspect
 import types
 
-from argcache.argcache import ArgCache
-from argcache.marinade import describe_func, get_containing_class
+from .argcache import ArgCache
+from .marinade import describe_func, get_containing_class
 
 class ArgCacheDecorator(ArgCache):
     """ An ArgCache that gets its parameters from a function. """

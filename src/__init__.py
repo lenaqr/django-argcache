@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 # Convenience imports
-from argcache.function import cache_function, cache_function_for
-from argcache.key_set import wildcard
+from .function import cache_function, cache_function_for
+from .key_set import wildcard
 
 default_app_config = 'argcache.apps.ArgCacheConfig'

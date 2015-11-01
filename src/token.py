@@ -26,8 +26,8 @@ import random
 
 from django.core.cache import cache
 
-from argcache.marinade import marinade_dish
-from argcache.key_set import has_wildcard, specifies_key
+from .marinade import marinade_dish
+from .key_set import has_wildcard, specifies_key
 
 __all__ = ['Token', 'ExternalToken']
 

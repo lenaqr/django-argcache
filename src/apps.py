@@ -30,7 +30,7 @@ class ArgCacheConfig(AppConfig):
     name = 'argcache'
 
     def ready(self):
-        from argcache.registry import _finalize_caches, _lock_caches
+        from .registry import _finalize_caches, _lock_caches
 
         # Fix up the queued events
         _finalize_caches()

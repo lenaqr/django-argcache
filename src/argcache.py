@@ -27,13 +27,13 @@ from django.dispatch import Signal
 from django.db.models import signals
 from django.conf import settings
 
-from argcache.queued import add_lazy_dependency
-from argcache.token import Token, SingleEntryToken
-from argcache.key_set import specifies_key, token_list_for
-from argcache.marinade import marinade_dish
-from argcache.registry import register_cache
-from argcache.sad_face import warn_if_loaded
-from argcache.signals import cache_deleted
+from .queued import add_lazy_dependency
+from .token import Token, SingleEntryToken
+from .key_set import specifies_key, token_list_for
+from .marinade import marinade_dish
+from .registry import register_cache
+from .sad_face import warn_if_loaded
+from .signals import cache_deleted
 
 __all__ = ['ArgCache']
 

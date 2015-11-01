@@ -22,7 +22,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from argcache.registry import all_caches
+from .registry import all_caches
 from esp.users.models import admin_required
 from esp.web.util.main import render_to_response
 from django.shortcuts import redirect
