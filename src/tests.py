@@ -3,9 +3,9 @@ from django.test import TestCase
 
 import unittest
 
-from esp.cache import registry, queued
-from esp.cache.function import cache_function
-from esp.cache.key_set import wildcard
+from argcache import registry, queued
+from argcache.function import cache_function
+from argcache.key_set import wildcard
 
 # hack the cache loader so we can define more caches
 registry._caches_locked = False

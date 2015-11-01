@@ -37,8 +37,8 @@ import random
 
 from django.core.cache import cache
 
-from esp.cache.marinade import marinade_dish
-from esp.cache.key_set import has_wildcard, specifies_key
+from argcache.marinade import marinade_dish
+from argcache.key_set import has_wildcard, specifies_key
 from esp.middleware import ESPError
 
 __all__ = ['Token', 'ExternalToken']

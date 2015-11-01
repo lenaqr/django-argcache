@@ -34,7 +34,7 @@ Learning Unlimited, Inc.
 """
 
 # Convenience imports
-from esp.cache.function import cache_function, cache_function_for
-from esp.cache.key_set import wildcard
+from argcache.function import cache_function, cache_function_for
+from argcache.key_set import wildcard
 
-default_app_config = 'esp.cache.apps.CacheConfig'
+default_app_config = 'argcache.apps.CacheConfig'

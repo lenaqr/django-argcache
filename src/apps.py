@@ -8,7 +8,7 @@ class CacheConfig(AppConfig):
     def ready(self):
         import sys
         from django.conf import settings
-        from esp.cache.registry import _finalize_caches, _lock_caches
+        from argcache.registry import _finalize_caches, _lock_caches
         from django.apps import apps
 
         # Make sure everything's already imported
@@ -27,7 +27,7 @@ class CacheConfig(AppConfig):
         #   Make sure all cached inclusion tags are registered
         import esp.utils.inclusion_tags
 
-        # import esp.cache.test
+        # import argcache.test
 
         # Fix up the queued events
         _finalize_caches()

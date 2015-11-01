@@ -1,7 +1,7 @@
 from esp.miniblog.models import Entry, AnnouncementLink
-#from esp.cache.tokened import FuncTokenedCache
-from esp.cache.argcache import ArgCache, cache_function
-from esp.cache.key_set import wildcard, is_wildcard
+#from argcache.tokened import FuncTokenedCache
+from argcache.argcache import ArgCache, cache_function
+from argcache.key_set import wildcard, is_wildcard
 
 cacheA = ArgCache('cacheA', ('param1', 'param2', 'param3'))
 # Make handlers

@@ -40,13 +40,13 @@ from django.conf import settings
 
 from esp.middleware import ESPError
 
-from esp.cache.queued import add_lazy_dependency
-from esp.cache.token import Token, SingleEntryToken
-from esp.cache.key_set import specifies_key, token_list_for
-from esp.cache.marinade import marinade_dish
-from esp.cache.registry import register_cache
-from esp.cache.sad_face import warn_if_loaded
-from esp.cache.signals import cache_deleted
+from argcache.queued import add_lazy_dependency
+from argcache.token import Token, SingleEntryToken
+from argcache.key_set import specifies_key, token_list_for
+from argcache.marinade import marinade_dish
+from argcache.registry import register_cache
+from argcache.sad_face import warn_if_loaded
+from argcache.signals import cache_deleted
 
 __all__ = ['ArgCache']
 

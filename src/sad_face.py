@@ -37,7 +37,7 @@ import traceback
 
 from django.core.mail import mail_admins
 
-from esp.cache.registry import caches_locked
+from argcache.registry import caches_locked
 
 __all__ = ['warn_if_loaded']
 

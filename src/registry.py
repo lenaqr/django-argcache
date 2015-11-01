@@ -47,7 +47,7 @@ def dump_all_caches():
         c.delete_all()
 
 def _finalize_caches():
-    from esp.cache.queued import do_all_pending
+    from argcache.queued import do_all_pending
     do_all_pending()
     if settings.CACHE_DEBUG:
         print "Initialized caches"

@@ -33,7 +33,7 @@ Learning Unlimited, Inc.
   Email: web-team@learningu.org
 """
 
-from esp.cache.registry import all_caches
+from argcache.registry import all_caches
 from esp.users.models import admin_required
 from esp.web.util.main import render_to_response
 from django.shortcuts import redirect

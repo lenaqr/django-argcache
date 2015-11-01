@@ -37,8 +37,8 @@ import functools
 import inspect
 import types
 
-from esp.cache.argcache import ArgCache
-from esp.cache.marinade import describe_func, get_containing_class
+from argcache.argcache import ArgCache
+from argcache.marinade import describe_func, get_containing_class
 
 class ArgCacheDecorator(ArgCache):
     """ An ArgCache that gets its parameters from a function. """
