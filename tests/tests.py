@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.test.client import Client
 
 import unittest
 
@@ -408,3 +409,43 @@ class CacheTests(TestCase):
             with_hashtag1_new = reporter.articles_with_hashtag(hashtag1.label)
         self.assertEqual(set(with_hashtag1_new), set(with_hashtag1))
         self.assertEqual(len(with_hashtag1_new), len(with_hashtag1))
+
+
+class CacheViewTests(TestCase):
+    def test_view_exists(self):
+        c = Client()
+        resp = c.get('/view_all')
+        self.assertEqual(resp.status_code, 200)
+
+    def test_view_lists_cached_functions(self):
+        c = Client()
+        resp = c.get('/view_all')
+        cached_functions = [
+            'Article.num_comments',
+            'Reporter.full_name',
+            'Reporter.top_article',
+            'Reporter.articles_with_hashtag',
+        ]
+        for name in cached_functions:
+            self.assertContains(resp, name)
+
+    def test_view_flush(self):
+        c = Client()
+        resp = c.get('/view_all')
+        self.assertContains(resp, 'get_calls')
+
+        # XX: lazy brittle hack to get the first link appearing after get_calls
+        _, s = resp.content.split('get_calls')
+        _, s = s.split('<a href="', 1)
+        s, _ = s.split('">Flush</a>', 1)
+        flush_url = s
+
+        resp = c.get(flush_url)
+        self.assertRedirects(resp, '/view_all')
+
+        a = get_calls('arg')
+        b = get_calls('arg')
+        _ = c.get(flush_url)
+        c = get_calls('arg')
+        self.assertEqual(a, b)
+        self.assertNotEqual(b, c)
