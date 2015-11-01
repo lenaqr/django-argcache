@@ -26,4 +26,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from argcache.function import cache_function, cache_function_for
 from argcache.key_set import wildcard
 
-default_app_config = 'argcache.apps.CacheConfig'
+default_app_config = 'argcache.apps.ArgCacheConfig'
