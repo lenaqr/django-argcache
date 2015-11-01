@@ -28,7 +28,7 @@ from django.db.models import Model
 from django.db.models.query import QuerySet
 from django.contrib.auth.models import AnonymousUser
 
-from esp.utils import force_str
+from .utils import force_str
 
 def describe_class(cls):
     return '%s.%s' % (cls.__module__.rstrip('.'), cls.__name__)
