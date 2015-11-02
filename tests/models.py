@@ -1,6 +1,7 @@
 from django.db import models
 from argcache.function import cache_function
 from argcache.key_set import wildcard
+from argcache.extras.derivedfield import DerivedField
 
 # some test functions and models
 
@@ -46,6 +47,13 @@ class Reporter(models.Model):
     def full_name(self):
         return self.first_name + ' ' + self.last_name
     full_name.depend_on_row('tests.Reporter', lambda reporter: {'self': reporter})
+
+    @cache_function
+    def get_backward_name(self):
+        return self.last_name + ' ' + self.first_name
+    get_backward_name.depend_on_row('tests.Reporter', lambda reporter: {'self': reporter}, filter=lambda reporter: (reporter.backward_name != reporter.last_name + ' ' + reporter.first_name))
+
+    backward_name = DerivedField(models.CharField, get_backward_name)(max_length=140)
 
     @cache_function
     def top_article(self):

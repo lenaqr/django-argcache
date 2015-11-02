@@ -562,3 +562,31 @@ class CacheInclusionTagTest(TestCase):
         rendered = t.render(Context({'arg': 'foo'}))
         self.assertEqual(rendered, "foo 6")
         self.assertEqual(counter[0], 7)
+
+
+class DerivedFieldTest(TestCase):
+    def setUp(self):
+        # create initial objects
+        reporter1 = Reporter.objects.create(pk=1, first_name='John', last_name='Doe')
+        reporter2 = Reporter.objects.create(pk=2, first_name='Jane', last_name='Roe')
+        reporter3 = Reporter.objects.create(pk=3, first_name='Jim', last_name='Poe')
+
+    def test_derived_agrees_with_cached_function(self):
+        reporter = Reporter.objects.get(pk=1)
+        n1 = reporter.backward_name
+        n2 = reporter.get_backward_name()
+        self.assertEqual(n1, n2)
+
+        reporter.first_name = 'Ron'
+        reporter.save()
+
+        reporter = Reporter.objects.get(pk=1)
+        n3 = reporter.backward_name
+        n4 = reporter.get_backward_name()
+        self.assertEqual(n3, n4)
+        self.assertNotEqual(n3, n1)
+
+    def test_derived_is_queryable(self):
+        with self.assertNumQueries(1):
+            reporters = list(Reporter.objects.order_by('backward_name'))
+        self.assertEqual([reporter.pk for reporter in reporters], [1, 3, 2])
