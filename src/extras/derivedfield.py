@@ -1,39 +1,26 @@
-#!/usr/bin/python
+
 __author__    = "Individual contributors (see AUTHORS file)"
 __date__      = "$DATE$"
 __rev__       = "$REV$"
 __license__   = "AGPL v.3"
 __copyright__ = """
-This file is part of the ESP Web Site
-Copyright (c) 2010 by the individual contributors
+This file is part of ArgCache.
+Copyright (c) 2015 by the individual contributors
   (see AUTHORS file)
 
-The ESP Web Site is free software; you can redistribute it and/or
-modify it under the terms of the GNU Affero General Public License
-as published by the Free Software Foundation; either version 3
-of the License, or (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Affero General Public License for more details.
 
-You should have received a copy of the GNU Affero General Public
-License along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-
-Contact information:
-MIT Educational Studies Program
-  84 Massachusetts Ave W20-467, Cambridge, MA 02139
-  Phone: 617-253-4882
-  Email: esp-webmasters@mit.edu
-Learning Unlimited, Inc.
-  527 Franklin St, Cambridge, MA 02139
-  Phone: 617-379-0178
-  Email: web-team@learningu.org
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-
-import sys
 
 def DerivedField(FieldCls, getter_fn):
     """
@@ -59,7 +46,7 @@ def DerivedField(FieldCls, getter_fn):
 
     To make this into a DerivedField, I'd need to do the following:
 
-    #>>> from esp.utils.derivedfield import DerivedField
+    #>>> from argcache.extras.derivedfield import DerivedField
     #>>> MyNewDerivedFieldType = DerivedField(models.IntegerField, counter_fn)
     #>>> class MyModel(models.Model):
     #>>>     mySum = MyNewDerivedFieldType(null=False, default=0)
@@ -70,7 +57,7 @@ def DerivedField(FieldCls, getter_fn):
     #>>>     mySum = DerivedField(models.IntegerField, counter_fn)(null=False, default=0)
 
     Now, note that I specified an argument "counter_fn".  counter_fn must be
-    a function that is cached using the caching API (esp.cache.argcache).
+    a function that is cached using the caching API (argcache).
     This code is an extension of the caching API: When that API flushes the
     cache in memcached, this code catches that event and also updates the value
     stored in the database.  So, for example:
@@ -79,7 +66,7 @@ def DerivedField(FieldCls, getter_fn):
     #>>>     " Example model that we might want to count "
     #>>>     myModelFk = models.ForeignKey(MyModel)
     #>>>
-    #>>> from esp.cache import cache_function
+    #>>> from argcache import cache_function
     #>>> @cache_function 
     #>>> def counter_fn(self):
     #>>>     return self.frob_set.count()
