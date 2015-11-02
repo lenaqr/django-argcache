@@ -1,12 +1,9 @@
 """Template tags for unit tests."""
 from django import template
 from django.template import Template
-from esp.web.util.template import cache_inclusion_tag
-from esp.cache.tests import Article, Reporter
-from esp.cache import registry
-
-# hack the cache loader so we can define more caches
-registry._caches_locked = False
+from argcache import registry
+from argcache.extras.template import cache_inclusion_tag
+from ..models import Article, Reporter
 
 register = template.Library()
 

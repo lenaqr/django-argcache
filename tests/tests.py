@@ -1,11 +1,13 @@
 from django.test import TestCase
 from django.test.client import Client
 from django.contrib.auth.models import User
+from django.template import Template, Context
 
 import unittest
 
 from argcache import registry, queued
 from .models import get_calls, HashTag, Article, Comment, Reporter
+from .templatetags.test_tags import counter, silly_inclusion_tag
 
 
 class CacheTests(TestCase):
@@ -461,7 +463,7 @@ class CacheViewTests(TestCase):
 
 
 class CacheInclusionTagTest(TestCase):
-    # Makes use of the tags in web/templatetags/test_tags.py
+    # Makes use of the tags in tests/templatetags/test_tags.py
     # This is one giant test because the ordering matters.
     def test_rendering(self):
         # test that it renders
@@ -499,8 +501,8 @@ class CacheInclusionTagTest(TestCase):
         self.assertEqual(rendered, "bar 2")
         self.assertEqual(counter[0], 2)
 
-        # test that changing any TemplateOverride expires the cache
-        TemplateOverride.objects.create(name="foo", content="bar")
+        # test that expiring the cached function expires the cache
+        silly_inclusion_tag.cached_function.delete_all()
         rendered = t.render(Context({'arg': 'foo'}))
         self.assertEqual(rendered, "foo 3")
         rendered = t.render(Context({'arg': 'foo'}))

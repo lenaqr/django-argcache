@@ -4,33 +4,22 @@ __date__      = "$DATE$"
 __rev__       = "$REV$"
 __license__   = "AGPL v.3"
 __copyright__ = """
-This file is part of the ESP Web Site
-Copyright (c) 2007 by the individual contributors
+This file is part of ArgCache.
+Copyright (c) 2015 by the individual contributors
   (see AUTHORS file)
 
-The ESP Web Site is free software; you can redistribute it and/or
-modify it under the terms of the GNU Affero General Public License
-as published by the Free Software Foundation; either version 3
-of the License, or (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Affero General Public License for more details.
 
-You should have received a copy of the GNU Affero General Public
-License along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-
-Contact information:
-MIT Educational Studies Program
-  84 Massachusetts Ave W20-467, Cambridge, MA 02139
-  Phone: 617-253-4882
-  Email: esp-webmasters@mit.edu
-Learning Unlimited, Inc.
-  527 Franklin St, Cambridge, MA 02139
-  Phone: 617-379-0178
-  Email: web-team@learningu.org
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from copy import copy
@@ -42,9 +31,8 @@ from django.template.base import generic_tag_compiler, TagHelperNode, Template
 from django.utils.itercompat import is_iterable
 from django.utils import six
 
-from esp.cache import cache_function
-from esp.cache.key_set import is_wildcard
-from esp.middleware import ESPError
+from .. import cache_function
+from ..key_set import is_wildcard
 
 __all__ = ['cache_inclusion_tag']
 
@@ -205,9 +193,9 @@ def cache_inclusion_tag(register, file_name, takes_context=False, name=None):
                 resolved_args, resolved_kwargs = self.get_resolved_arguments(context)
                 # CHANGED: added the conditional safety-check.
                 if resolved_kwargs:
-                    raise ESPError("Due to ArgCache limitations, "
-                                   "cache_inclusion_tag does not support "
-                                   "passing keyword arguments.")
+                    raise ValueError("Due to ArgCache limitations, "
+                                     "cache_inclusion_tag does not support "
+                                     "passing keyword arguments.")
                 # CHANGED: moved the remainder of the work of the function into
                 # render_given_args so we can cache it.  We sneakily pass
                 # context around where argcache won't see it -- as an attribute
@@ -270,7 +258,6 @@ def cache_inclusion_tag(register, file_name, takes_context=False, name=None):
             render_given_args.get_or_create_token(('resolved_args',))
             render_given_args.depend_on_cache(
                 cached_func, _render_cache_key_set_mapper(params))
-            render_given_args.depend_on_model('utils.TemplateOverride')
 
         function_name = (name or
             getattr(func, '_decorated_function', func).__name__)
