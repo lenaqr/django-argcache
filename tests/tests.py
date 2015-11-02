@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.test.client import Client
+from django.contrib.auth.models import User
 
 import unittest
 
@@ -412,13 +413,20 @@ class CacheTests(TestCase):
 
 
 class CacheViewTests(TestCase):
+    def setUp(self):
+        staff_user = User.objects.create_user(username='testuser', password='testpass')
+        staff_user.is_staff = True
+        staff_user.save()
+
     def test_view_exists(self):
         c = Client()
+        c.login(username='testuser', password='testpass')
         resp = c.get('/view_all')
         self.assertEqual(resp.status_code, 200)
 
     def test_view_lists_cached_functions(self):
         c = Client()
+        c.login(username='testuser', password='testpass')
         resp = c.get('/view_all')
         cached_functions = [
             'Article.num_comments',
@@ -431,6 +439,7 @@ class CacheViewTests(TestCase):
 
     def test_view_flush(self):
         c = Client()
+        c.login(username='testuser', password='testpass')
         resp = c.get('/view_all')
         self.assertContains(resp, 'get_calls')
 
