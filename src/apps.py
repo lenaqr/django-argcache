@@ -22,7 +22,10 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django.apps import AppConfig
+import importlib
+from django.apps import AppConfig, apps
+
+from .registry import _finalize_caches, _lock_caches
 
 class ArgCacheConfig(AppConfig):
     """ Makes sure all caches are inserted. Replacement for cache_loader. """
@@ -30,7 +33,14 @@ class ArgCacheConfig(AppConfig):
     name = 'argcache'
 
     def ready(self):
-        from .registry import _finalize_caches, _lock_caches
+        # Import caches from each installed app
+        for app_config in apps.get_app_configs():
+            try:
+                importlib.import_module('.caches', app_config.name)
+            except ImportError as e:
+                if e.args == ('No module named caches',):
+                    continue
+                raise
 
         # Fix up the queued events
         _finalize_caches()
