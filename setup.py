@@ -17,7 +17,8 @@ setup(
     author='Anthony Lu',
     author_email='lua@mit.edu',
     packages=[
-        'argcache'
+        'argcache',
+        'argcache.extras',
     ],
     package_dir={
         'argcache': 'src'
