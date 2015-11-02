@@ -42,4 +42,4 @@ def flush(request, cache_id):
         return HttpResponseForbidden()
     cache = sorted(all_caches, key=lambda c: c.name)[int(cache_id)]
     cache.delete_all()
-    return redirect(reverse(view_all))
+    return redirect(reverse('view_all'))

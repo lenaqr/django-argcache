@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls import *
 
-urlpatterns = patterns('',
-                        (r'^view_all/?$', 'argcache.views.view_all'),
-                        (r'^flush/([0-9]+)/?$', 'argcache.views.flush')
-                        )
+urlpatterns = [
+    url(r'^view_all/?$', 'argcache.views.view_all', name='view_all'),
+    url(r'^flush/([0-9]+)/?$', 'argcache.views.flush', name='flush')
+]
