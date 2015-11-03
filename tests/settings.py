@@ -20,14 +20,15 @@ DATABASES = {
 
 ROOT_URLCONF = 'argcache.urls'
 
+TEMPLATE_LOADERS = [
+    'django.template.loaders.app_directories.Loader',
+    'django.template.loaders.eggs.Loader',
+]
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'OPTIONS': {
-            'loaders': [
-                'django.template.loaders.app_directories.Loader',
-                'django.template.loaders.eggs.Loader',
-            ]
+            'loaders': TEMPLATE_LOADERS
         }
     }
 ]
