@@ -3,13 +3,7 @@ from argcache.function import cache_function
 from argcache.key_set import wildcard
 from argcache.extras.derivedfield import DerivedField
 
-# some test functions and models
-
-counter = [0]
-@cache_function
-def get_calls(x):
-    counter[0] += 1
-    return counter[0]
+# some test models
 
 class HashTag(models.Model):
     label = models.CharField(max_length=40, unique=True)

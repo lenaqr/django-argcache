@@ -4,9 +4,11 @@ from django.contrib.auth.models import User
 from django.template import Template, Context
 
 import unittest
+import threading
 
 from argcache import registry, queued
-from .models import get_calls, HashTag, Article, Comment, Reporter
+from .caches import get_calls, set_value, get_value, get_value_slowly
+from .models import HashTag, Article, Comment, Reporter
 from .templatetags.test_tags import counter, silly_inclusion_tag
 
 
@@ -590,3 +592,46 @@ class DerivedFieldTest(TestCase):
         with self.assertNumQueries(1):
             reporters = list(Reporter.objects.order_by('backward_name'))
         self.assertEqual([reporter.pk for reporter in reporters], [1, 3, 2])
+
+
+class CacheConcurrencyTest(TestCase):
+    def call_concurrently(self, funcs):
+        """
+        Helper function to run multiple functions concurrently, re-raising
+        exceptions on the main thread.
+        """
+        threads = []
+        exceptions = []
+
+        def capture_exceptions(func):
+            def wrapper(*args, **kwargs):
+                try:
+                    func(*args, **kwargs)
+                except Exception as e:
+                    exceptions.append(e)
+                    raise
+            return wrapper
+
+        for f in funcs:
+            threads.append(threading.Thread(target=capture_exceptions(f)))
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+        for e in exceptions:
+            raise e
+
+    @unittest.skip("Known issue, see Github #1463")
+    def test_race_cached_function(self):
+        set_value(1)
+        def a():
+            x = get_value_slowly()
+            self.assertEqual(x, 1)
+        def b():
+            set_value(2)
+            x = get_value()
+            self.assertEqual(x, 2)
+        self.call_concurrently([a, b])
+        x = get_value()
+        y = get_value_slowly()
+        self.assertEqual(x, y)
