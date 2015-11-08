@@ -19,12 +19,12 @@ $ python setup.py install
 Setup
 -----
 
-Add "argcache" to your INSTALLED_APPS:
+Add argcache to your INSTALLED_APPS:
 
 ```
 INSTALLED_APPS = (
     ...
-    'argcache',
+    'argcache.apps.ArgCacheConfig',
 )
 ```
 

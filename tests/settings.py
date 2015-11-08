@@ -7,7 +7,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'argcache',
+    'argcache.apps.ArgCacheConfig',
     'tests',
 ]
 

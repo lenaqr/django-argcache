@@ -28,5 +28,3 @@ settings.CACHE_DEBUG = getattr(settings, 'CACHE_DEBUG', False)
 # Convenience imports
 from .function import cache_function, cache_function_for
 from .key_set import wildcard
-
-default_app_config = 'argcache.apps.ArgCacheConfig'
