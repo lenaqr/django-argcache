@@ -11,7 +11,7 @@ setup(
     name='django-argcache',
     version='0.1',
     license='AGPLv3',
-    description='A function-level caching and invalidaton fraemwork for Django.',
+    description='A function-level caching and invalidaton framework for Django.',
     long_description=README,
     url='https://github.com/luac/django-argcache/',
     author='Anthony Lu',
