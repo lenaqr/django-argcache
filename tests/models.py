@@ -25,6 +25,7 @@ class Article(models.Model):
     @cache_function
     def num_comments_with_dummy(self, dummy):
         return self.comments.count()
+    num_comments_with_dummy.get_or_create_token(('self',))
     num_comments_with_dummy.depend_on_row('tests.Comment', lambda comment: {'self': comment.article})
 
     def __unicode__(self):
@@ -74,6 +75,7 @@ class Reporter(models.Model):
     @cache_function
     def articles_with_headline_and_dummy(self, dummy, headline):
         return list(self.articles.filter(headline=headline).values_list('content', flat=True))
+    articles_with_headline_and_dummy.get_or_create_token(('self', 'headline'))
     articles_with_headline_and_dummy.depend_on_row(Article, lambda article: {'self': article.reporter, 'headline': article.headline})
 
     def __unicode__(self):

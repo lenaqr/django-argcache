@@ -158,7 +158,6 @@ class CacheTests(TestCase):
             cnt3 = article.num_comments()
         self.assertEqual(cnt3, cnt2)
 
-    @unittest.skip("Known issue, see Github #866")
     def test_depend_on_row_with_dummy(self):
         """
         depend_on_row still works correctly when there are other arguments to the function.
@@ -247,7 +246,6 @@ class CacheTests(TestCase):
             arts3e = reporter3.articles_with_headline('Article II')
             self.assertNotEqual(arts3d,arts3e)
 
-    @unittest.skip("Known issue, see Github #866")
     def test_depend_on_row_multiple_arguments_with_dummy(self):
         '''Tests for a bug when more than one but less than all of the arguments to the function are used in a depend_on_row.'''
         reporter1 = Reporter.objects.get(pk=1)
