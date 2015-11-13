@@ -619,7 +619,7 @@ class CacheConcurrencyTest(TestCase):
         for e in exceptions:
             raise e
 
-    @unittest.skip("Known issue, see Github #1463")
+    @unittest.skip("Known issue, see Github #2")
     def test_race_cached_function(self):
         set_value(1)
         def a():
