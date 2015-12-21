@@ -27,7 +27,20 @@ from functools import partial
 from inspect import getargspec
 
 from django.template import Context
-from django.template.base import generic_tag_compiler, TagHelperNode, Template
+try:
+    from django.template.base import generic_tag_compiler, TagHelperNode, Template
+except ImportError:
+    # Django 1.9+
+    from django.template.base import Template
+    from django.template.library import parse_bits, TagHelperNode
+
+    # copied from Django 1.8 source, since this function was removed in 1.9
+    def generic_tag_compiler(parser, token, params, varargs, varkw, defaults,
+                             name, takes_context, node_class):
+        bits = token.split_contents()[1:]
+        args, kwargs = parse_bits(parser, bits, params, varargs, varkw,
+                                  defaults, takes_context, name)
+        return node_class(takes_context, args, kwargs)
 from django.utils.itercompat import is_iterable
 from django.utils import six
 
