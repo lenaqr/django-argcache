@@ -7,7 +7,8 @@ import unittest
 import threading
 
 from argcache import registry, queued
-from .caches import get_calls, set_value, get_value, get_value_slowly
+from .caches import (get_calls, get_calls_reset, get_squared_calls,
+                     set_value, get_value, get_value_slowly)
 from .models import HashTag, Article, Comment, Reporter
 from .templatetags.test_tags import counter, silly_inclusion_tag
 
@@ -46,6 +47,7 @@ class CacheTests(TestCase):
         """
         # check that we make the expected number of function calls,
         # and get the expected results for arguments of various types
+        get_calls_reset()
         self.assertEqual(get_calls(1), 1)
         self.assertEqual(get_calls(()), 2)
         self.assertEqual(get_calls('a'), 3)
@@ -319,6 +321,27 @@ class CacheTests(TestCase):
         depend_on_cache triggers cache invalidation when dependent caches
         are invalidated.
         """
+
+        get_calls_reset()
+
+        # get_squared_calls depends on get_calls
+        self.assertEqual(get_calls('test depend on cache'), 1)
+        self.assertEqual(get_squared_calls('test depend on cache'), 1)
+
+        # still cached
+        self.assertEqual(get_squared_calls('test depend on cache'), 1)
+        self.assertEqual(get_calls('test depend on cache'), 1)
+
+        # invalidate; both functions should be flushed now.
+        get_calls.delete_all()
+        self.assertEqual(get_calls('test depend on cache'), 2)
+        self.assertEqual(get_squared_calls('test depend on cache'), 4)
+
+        # again, but in the other order
+        get_calls.delete_all()
+        self.assertEqual(get_squared_calls('test depend on cache'), 9)
+        self.assertEqual(get_calls('test depend on cache'), 3)
+
         # Reporter.top_article depends on Article.num_comments
         # so invalidating num_comments should invalidate top_article too
         reporter = Reporter.objects.get(pk=1)
