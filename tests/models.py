@@ -1,5 +1,5 @@
 from django.db import models
-from argcache.function import cache_function
+from argcache.function import cache_function, depend_on_row, ensure_token
 from argcache.key_set import wildcard
 from argcache.extras.derivedfield import DerivedField
 
@@ -17,16 +17,18 @@ class Article(models.Model):
     reporter = models.ForeignKey('Reporter', related_name='articles')
     hashtags = models.ManyToManyField('HashTag', related_name='articles')
 
-    @cache_function
+    @cache_function([
+        depend_on_row('tests.Comment', lambda comment: {'self': comment.article})
+    ])
     def num_comments(self):
         return self.comments.count()
-    num_comments.depend_on_row('tests.Comment', lambda comment: {'self': comment.article})
 
-    @cache_function
+    @cache_function([
+        ensure_token(('self',)),
+        depend_on_row('tests.Comment', lambda comment: {'self': comment.article}),
+    ])
     def num_comments_with_dummy(self, dummy):
         return self.comments.count()
-    num_comments_with_dummy.get_or_create_token(('self',))
-    num_comments_with_dummy.depend_on_row('tests.Comment', lambda comment: {'self': comment.article})
 
     def __unicode__(self):
         return self.headline

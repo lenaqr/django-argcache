@@ -32,7 +32,28 @@ from .marinade import describe_func, get_containing_class
 class ArgCacheDecorator(ArgCache):
     """ An ArgCache that gets its parameters from a function. """
 
-    def __init__(self, func, *args, **kwargs):
+    def __new__(cls, func_or_spec=None, spec=None, **kwargs):
+        ## This __new__ method exists to allow the decorator to be
+        ## called in a couple of different ways. In particular, it is
+        ## possible to pass a list of "cache directives" (typically a
+        ## sequence of depend_on_foo calls) which will be applied to
+        ## the cached function after it is made.
+        if isinstance(func_or_spec, list):
+            # Invoked as cache_function([list of cache directives])
+            if spec is not None:
+                raise TypeError(
+                    "cache_function() got multiple values for keyword argument 'spec'")
+            return functools.partial(cls, spec=func_or_spec, **kwargs)
+        elif func_or_spec is None:
+            # Invoked as cache_function(spec=[list of cache directives])
+            # or possibly other kwargs like cache_function(timeout_seconds=N)
+            return functools.partial(cls, spec=spec, **kwargs)
+        else:
+            # Actually applying the decorator
+            return super(ArgCacheDecorator, cls).__new__(
+                cls, func_or_spec, spec=spec, **kwargs)
+
+    def __init__(self, func, spec=None, **kwargs):
         """ Wrap func in a ArgCache. """
 
         ## Keep the original function's name and docstring
@@ -54,7 +75,12 @@ class ArgCacheDecorator(ArgCache):
         if keywords is not None:
             raise ESPError("ArgCache does not support keywords.")
 
-        super(ArgCacheDecorator, self).__init__(name=name, params=params, *args, **kwargs)
+        super(ArgCacheDecorator, self).__init__(name=name, params=params, **kwargs)
+
+        # Apply cache directives, if any
+        if spec is not None:
+            for method in spec:
+                method(self)
 
     # TODO: this signature may break if we have a kwarg named `self`
     # (same applies to __call__ below)
@@ -95,9 +121,18 @@ class ArgCacheDecorator(ArgCache):
 # This is a bit more of a decorator-style name
 cache_function = ArgCacheDecorator
 
-
 def cache_function_for(timeout_seconds):
-    def _dec(f):
-        return functools.wraps(f)(
-            cache_function(f, timeout_seconds=timeout_seconds))
-    return _dec
+    return cache_function(timeout_seconds=timeout_seconds)
+
+# A "directive" is simply a lambda that calls the appropriate method
+# on an ArgCache instance.
+def directive_maker(method):
+    def directive(*args, **kwargs):
+        return (lambda cache_obj: method(cache_obj, *args, **kwargs))
+    return directive
+
+depend_on_model = directive_maker(ArgCache.depend_on_model)
+depend_on_row = directive_maker(ArgCache.depend_on_row)
+depend_on_cache = directive_maker(ArgCache.depend_on_cache)
+depend_on_m2m = directive_maker(ArgCache.depend_on_m2m)
+ensure_token = directive_maker(ArgCache.get_or_create_token)

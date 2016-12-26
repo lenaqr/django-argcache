@@ -1,5 +1,6 @@
 import time
-from argcache.function import cache_function
+from argcache.function import cache_function, depend_on_cache
+from argcache.key_set import wildcard
 
 # make sure cached inclusion tags are imported by the cache loader
 from .templatetags import test_tags
@@ -11,6 +12,15 @@ counter = [0]
 def get_calls(x):
     counter[0] += 1
     return counter[0]
+
+def get_calls_reset():
+    counter[0] = 0
+
+@cache_function([
+    depend_on_cache(get_calls, lambda x=wildcard: {'x': x})
+])
+def get_squared_calls(x):
+    return get_calls(x)**2
 
 value = [0]
 def set_value(x):
