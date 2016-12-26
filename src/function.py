@@ -46,6 +46,7 @@ class ArgCacheDecorator(ArgCache):
             return functools.partial(cls, spec=func_or_spec, **kwargs)
         elif func_or_spec is None:
             # Invoked as cache_function(spec=[list of cache directives])
+            # or possibly other kwargs like cache_function(timeout_seconds=N)
             return functools.partial(cls, spec=spec, **kwargs)
         else:
             # Actually applying the decorator
