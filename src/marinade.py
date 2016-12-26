@@ -26,7 +26,6 @@ import inspect
 
 from django.db.models import Model
 from django.db.models.query import QuerySet
-from django.contrib.auth.models import AnonymousUser
 
 from .utils import force_str
 
@@ -58,10 +57,7 @@ def marinade_dish(arg):
     if isinstance(arg, list):
         return '[%s]' % ','.join([marinade_dish(item) for item in arg])
     if isinstance(arg, Model):
-        # ESPUsers are also instances of AnonymousUser, but might not be
-        # anonymous.
-        if arg.id is None and (not isinstance(arg, AnonymousUser) or
-                               not arg.is_anonymous()):
+        if arg.id is None:
             import random
             # TODO: Make this log something
             print "PASSING UNSAVED MODEL!!! ERROR!!! CACHING CODE SHOULD NOT BE ENABLED!!!"
